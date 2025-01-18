@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 import { envs } from './config';
 
 async function bootstrap() {
@@ -19,6 +20,16 @@ async function bootstrap() {
       }
     })
   )
+
+  const config = new DocumentBuilder()
+    .setTitle('API Gateway')
+    .setDescription('API Gateway for microservices architecture, with all controllers')
+    .setVersion('0.0.1')
+    .addTag('API Gateway')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('doc', app, document);
+
   await app.listen(envs.PORT);
   logger.log(`Server running on port ${envs.PORT}`)
 }
