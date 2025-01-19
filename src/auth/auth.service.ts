@@ -4,6 +4,16 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
+  private apikeys: string[] = [];
+
+  constructor() {
+    this.apikeys = ['123456', '654321']; // test apikey, this apies will be stored in database
+  }
+
+  validateApiKey(apikey: string): boolean {
+    return this.apikeys.includes(apikey);
+  }
+
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new auth';
   }
