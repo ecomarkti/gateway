@@ -18,7 +18,7 @@ import { envs } from 'src/config';
                 username: configService.get('POSTGRES_USER'),
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DB'),
-                ssl: configService.get('APP_ENV') === 'production' 
+                ssl: configService.get('APP_ENV') === 'production'
                 ? {
                     ca: fs.readFileSync('path/to/ca.crt').toString(),
                     key: fs.readFileSync('path/to/client.key').toString(),
@@ -27,7 +27,7 @@ import { envs } from 'src/config';
                     rejectUnauthorized: false,
                 },
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: configService.get('APP_ENV') === 'development' ? true : false,
             }),
         })
     ],
@@ -42,7 +42,7 @@ import { envs } from 'src/config';
                     database: POSTGRES_DB,
                     password: POSTGRES_PASSWORD,
                     port: POSTGRES_PORT,
-                    ssl: APP_ENV === 'production' 
+                    ssl: APP_ENV === 'production'
                     ? {
                         ca: fs.readFileSync('path/to/ca.crt').toString(),
                         key: fs.readFileSync('path/to/client.key').toString(),
