@@ -5,14 +5,32 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AuthApikeyStrategy } from './strategy';
 import { AuthApiKeyMiddleware } from './middlewares';
-import { User, Rol } from './entities';
+import { User, Rol, ApiKey } from './entities';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { envs } from 'src/config';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { MailsModule } from 'src/mails/mails.module';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, AuthApikeyStrategy, AuthApiKeyMiddleware],
-  imports: [
-    TypeOrmModule.forFeature([ User, Rol ]),
+  providers: [
+    AuthService,
+    AuthApikeyStrategy,
+    AuthApiKeyMiddleware,
+    JwtStrategy,
   ],
-  exports: [TypeOrmModule]
+  imports: [
+    TypeOrmModule.forFeature([User, Rol, ApiKey]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: envs.JWT_SECRET,
+        signOptions: { expiresIn: '4h' },
+      }),
+    }),
+    MailsModule,
+  ],
+  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}

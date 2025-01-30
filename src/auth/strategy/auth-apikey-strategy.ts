@@ -5,11 +5,14 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthApikeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
+  private apikeys: string[] = ['1234567'];
+
   constructor(private readonly authService: AuthService) {
     super({ header: 'x-api-key', prefix: '' }, false);
+    // TODO: validar como genera el gateway para traer los apikeys y guardarlos en cache.
   }
 
-  async validate(apikey: string): Promise<boolean> {
-    return this.authService.validateApiKey(apikey);
+  validate(apikey: string): boolean {
+    return this.apikeys.includes(apikey);
   }
 }
