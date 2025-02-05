@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Logger, Post, Query, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IncomingHttpHeaders } from 'http';
@@ -10,6 +10,7 @@ import { User } from './entities';
 
 @Controller('auth')
 export class AuthController {
+  logger = new Logger('AuthController');
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')

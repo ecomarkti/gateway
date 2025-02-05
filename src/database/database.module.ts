@@ -31,6 +31,8 @@ import { envs } from 'src/config';
         autoLoadEntities: true,
         synchronize:
           configService.get('APP_ENV') === 'development' ? true : false,
+        poolSize: 10,
+
       }),
     }),
   ],
