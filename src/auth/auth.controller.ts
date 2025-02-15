@@ -5,7 +5,7 @@ import { IncomingHttpHeaders } from 'http';
 
 import { AuthService } from './auth.service';
 import { Auth, GetUser } from './decorators';
-import { CreateUserDto, ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dto';
+import { CreateUserDto, ForgotPasswordDto, LoginUserDto, LoginWithTokenDto, ResetPasswordDto } from './dtoS';
 import { User } from './entities';
 
 @Controller('auth')
@@ -35,6 +35,13 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto
   ) {
     return await this.authService.loginUser(loginUserDto);
+  }
+
+  @Post('login-with-token')
+  async loginWithToken(
+    @Body() loginWithToken: LoginWithTokenDto
+  ){
+    return await this.authService.loginWithToken(loginWithToken);
   }
 
   @Post('refresh-token')

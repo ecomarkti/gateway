@@ -18,6 +18,13 @@ import { envs } from 'src/config';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
+        autoLoadEntities: true,
+        poolSize: 10,
+        extra: {
+          keepAlive: true, // Mantiene la conexión activa
+          idleTimeoutMillis: 30000, // Cierra conexiones inactivas después de 30s
+          connectionTimeoutMillis: 5000, // Espera 5s antes de descartar la conexión
+        },
         ssl:
           configService.get('APP_ENV') === 'production'
             ? {
@@ -28,11 +35,8 @@ import { envs } from 'src/config';
             : {
                 rejectUnauthorized: false,
               },
-        autoLoadEntities: true,
         synchronize:
           configService.get('APP_ENV') === 'development' ? true : false,
-        poolSize: 10,
-
       }),
     }),
   ],

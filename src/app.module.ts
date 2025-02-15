@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthApiKeyMiddleware } from './auth/middlewares/auth-api-key.middleware';
 import { CommonModule } from './common/common.module';
 import { MailsModule } from './mails/mails.module';
+import { AppModule as App } from './app/app.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MailsModule } from './mails/mails.module';
     AuthModule,
     CommonModule,
     MailsModule,
+    App,
   ],
 })
 export class AppModule implements NestModule {

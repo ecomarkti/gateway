@@ -7,6 +7,10 @@ export class User {
   @PrimaryGeneratedColumn({ name: 'ID' })
   id: number;
 
+  @ManyToOne(() => Rol, rol => rol.users)
+  @JoinColumn({ name: 'ROL_ID' })
+  rol?: Rol;
+
   @Column('text', { name: 'FIRST_NAME' })
   firstname: string;
 
@@ -51,10 +55,6 @@ export class User {
 
   @Column({ type: 'timestamp', nullable: true, name: 'DELETE_AT' })
   deleteAt?: Date;
-
-  @ManyToOne(() => Rol, rol => rol.users)
-  @JoinColumn({ name: 'ROL_ID' })
-  rol?: Rol;
 
   @BeforeInsert()
   async setDefaultRol() {

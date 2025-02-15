@@ -3,13 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { AuthApikeyStrategy } from './strategy';
+import { AuthApikeyStrategy, JwtStrategy } from './strategies';
 import { AuthApiKeyMiddleware } from './middlewares';
 import { User, Rol, ApiKey } from './entities';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { envs } from 'src/config';
-import { JwtStrategy } from './strategy/jwt.strategy';
 import { MailsModule } from 'src/mails/mails.module';
 
 @Module({

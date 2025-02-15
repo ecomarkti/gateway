@@ -13,13 +13,12 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities';
-import { ForgotPasswordDto, LoginUserDto, ResetPasswordDto } from './dto';
+import { ForgotPasswordDto, LoginUserDto, LoginWithTokenDto, RefreshTokenDto, ResetPasswordDto } from './dtos';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { MailsService } from 'src/mails/mails.service';
 import { envs } from 'src/config';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { IncomingHttpHeaders } from 'http';
 import { ExpiresIn } from './interfaces/expiresIn.type';
 
@@ -75,13 +74,14 @@ export class AuthService {
       user.isActive = true;
       await this.userRepository.save(user);
 
-      return res.redirect(302, `${envs.FRONTEND_URL}/welcome`);
+      return res.redirect(302, `${envs.FRONTEND_URL}/sign-in`);
     } catch (error) {
       return res.status(400).json({ message: 'Error activating account', error });
     }
   }
 
   async loginUser({ email, password }: LoginUserDto) {
+    this.logger.log(`Login user: ${email}`);
     const user = await this.userRepository.findOne({
       where: { email, isActive: true },
       select: { email: true, password: true, id: true, firstname: true, lastname: true, nickname: true },
@@ -97,11 +97,30 @@ export class AuthService {
     const accessToken = this.getJwtToken({ ...user });
     const refreshToken = await this.createNewRefreshToken(user);
 
+    this.logger.log(`login success: ${email}`);
     return {
-      ...user,
+      user,
       accessToken,
       refreshToken
     };
+  }
+
+  async loginWithToken({ token }: LoginWithTokenDto) {
+    try {
+      this.logger.log(`Login with token: ${token}`);
+      const { email } = this.jwtService.verify(token, { secret: envs.JWT_SECRET }) as JwtPayload;
+      const user = await this.userRepository.findOneBy({ email });
+
+      if (!user) throw new NotFoundException('User not found');
+
+      delete user.password;
+      return {
+        user,
+        accessToken: this.getJwtToken({ ...user })
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   async createNewRefreshToken(user: User) {
